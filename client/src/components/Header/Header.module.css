@@ -1,0 +1,38 @@
+.container{
+  width: 100vw;
+  background-color: #fff;
+}
+
+.header {
+  width: 100%;
+  max-width: 1280px;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 16px;
+}
+
+img {
+  width: 48px;
+  height: 48px;
+  max-width: 10%;
+}
+
+.nav {
+  display: flex;
+  justify-content: flex-start;
+  gap: 16px;
+  width: 80%;
+}
+
+.logout_button {
+  background-color: transparent;
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 156%;
+  text-align: center;
+  color: #1390e5;
+}

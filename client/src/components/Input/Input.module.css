@@ -1,0 +1,32 @@
+.input_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.label {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 137%;
+  color: rgba(23, 23, 25, 0.3);
+  margin: 0;
+}
+
+.input_div{
+  position: relative;
+  width: 100%;
+}
+
+.icon {
+  position: absolute;
+  top: 15px;
+  right: 10px;
+  cursor: pointer;
+  color: #d1d1d1;
+  width: 24px;
+  height: 24px;
+}
