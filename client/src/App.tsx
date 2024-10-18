@@ -1,17 +1,14 @@
-import { BrowserRouter } from 'react-router-dom'
-import './App.css'
-import { Header } from './components/Header/Header'
-import { HomePage } from './pages/home/home'
+import { BrowserRouter } from "react-router-dom";
+import "./App.css";
 
+import { LoginPage } from "./pages/login/login";
 
 function App() {
-
   return (
     <BrowserRouter>
-      <Header/>
-      <HomePage/>
+      <LoginPage />
     </BrowserRouter>
-  )
+  );
 }
 
-export default App
+export default App;

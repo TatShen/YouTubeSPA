@@ -3,27 +3,35 @@ import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
 import style from "./Modal.module.css";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import { userApi } from "../../services/User.service";
 
 export const Modal = () => {
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-
-  const onFormSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const [repeatPassword, setRepeatPassword] = useState("")
+  const [isRegistration, setIsRegistration] = useState(false);
+ 
+  const onFormSubmitHandler = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(login, password);
+    if(isRegistration && password===repeatPassword){
+      await userApi.registration({login, password})
+    }
+    
+    const data = await userApi.login({login, password})
+    console.log(data)
   };
 
   return (
     <div className={style.modal_container}>
       <img src="/logo.svg" alt="Logo" />
-      <h1>Вход</h1>
+      <h1>{isRegistration ? "Регистрация" : "Вход"}</h1>
       <form onSubmit={onFormSubmitHandler}>
         <Input
           type="text"
           label="Логин"
           className={style.input}
-          value={password}
+          value={login}
           handler={(e) => setLogin(e.target.value)}
         />
         <Input
@@ -32,12 +40,32 @@ export const Modal = () => {
           className={style.input}
           icon={isPasswordHidden ? <IoEyeOffOutline /> : <IoEyeOutline />}
           onClick={() => setIsPasswordHidden(!isPasswordHidden)}
-          value={login}
+          value={password}
           handler={(e) => setPassword(e.target.value)}
         />
-
-        <Button type="submit" content="Войти" />
+        {isRegistration && (
+          <Input
+            type={isPasswordHidden ? "password" : "text"}
+            label="Повторите пароль"
+            className={style.input}
+            icon={isPasswordHidden ? <IoEyeOffOutline /> : <IoEyeOutline />}
+            onClick={() => setIsPasswordHidden(!isPasswordHidden)}
+            value={repeatPassword}
+            handler={(e) => setRepeatPassword(e.target.value)}
+          />
+        )}
+        <Button
+          type="submit"
+          content={isRegistration ? "Зарегистрироваться" : "Войти"}
+        />
       </form>
+
+      <Button
+        type="button"
+        content={isRegistration ? "Вход" : "Регистрация"}
+        className={style.change_form}
+        onClick={() => setIsRegistration(!isRegistration)}
+      />
     </div>
   );
 };

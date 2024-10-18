@@ -10,6 +10,7 @@ export const HomePage = () => {
   const [search, setSearch] = useState("");
   const handlerSearch = () => {
     console.log(search)
+    setResults(["jjj"])
   }
   return (
     <div className={style.container}>

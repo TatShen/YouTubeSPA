@@ -6,7 +6,7 @@ const userControllers = require("../controllers/userControllers")
 
 router.post("/registration", validateBodyUser, userControllers.registration)
 
-router.post("/login",validateBodyUser,  userControllers.login)
+router.post("/login",validateBodyUser, userControllers.login)
 
 router.get("/", authenticateToken, userControllers.getUser)
 

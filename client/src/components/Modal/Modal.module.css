@@ -24,3 +24,15 @@ h1 {
   width: 334px;
   height: 48px;
 }
+
+.change_form{
+  background-color: transparent;
+  border: none;
+  color: rgba(23, 23, 25, 0.3);
+  margin-top: 32px;
+}
+
+.change_form:hover{
+  border: none;
+  color: #000;
+}
