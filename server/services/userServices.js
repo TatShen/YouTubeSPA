@@ -7,31 +7,33 @@ class UserServices {
     try {
       if (await Users.findOne({ where: { login } })) {
         res.status(400).json({ message: "Такой пользователь уже существует" });
+        return
       }
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-      await User.create({ login, password: hashedPassword });
+      await Users.create({ login, password: hashedPassword });
       res
         .status(200)
         .json({ message: "Пользователь успешно зарегистрирован!" })
+        return
         
     } catch (error) {
+      console.log(error)
       res.status(500).json({ message: "Ошибка регистрации пользователя" });
     }
   }
 
   async login({ login, password }, res) {
-    console.log(1)
     try {
-      console.log(2)
       const user = await Users.findOne({ where: { login } });
-      console.log(3)
       if (!user) {
         res.status(401).json({ message: "Неверный логин или пароль" });
+        return
       }
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         res.status(401).json({ message: "Неверный логин или пароль" });
+        return
       }
       const token = jwt.sign({ userId: user.id }, process.env.SECRET_KEY, {
         expiresIn: "2h",
