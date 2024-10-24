@@ -12,13 +12,15 @@
 .result{
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 40px;
   justify-content: flex-start;
   align-items: flex-start;
   width: 100%;
 }
 
 .searchValue {
+  position: relative;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -53,3 +55,16 @@
   justify-content: space-between;
 }
 
+
+.icons{
+  position: absolute;
+  right: 0;
+  display: flex;
+  gap: 15px;
+}
+
+.icon{
+  width: 40px;
+  height: 40px;
+  max-width: none;
+}

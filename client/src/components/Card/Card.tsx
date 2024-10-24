@@ -4,11 +4,12 @@ import { IFullVideo } from "../../services/Types";
 
 interface ICard {
   info: IFullVideo;
+  typeOfWrapper: string
 }
 
-export const Card: React.FC<ICard> = ({ info }) => {
+export const Card: React.FC<ICard> = ({ info, typeOfWrapper }) => {
   return (
-    <div className={style.card}>
+    <div className={style.card} style={{flexDirection: typeOfWrapper === "list" ? "row" : "column", width: typeOfWrapper === "list" ? "100%" : "22%"}}>
       <div>
         <div dangerouslySetInnerHTML={{ __html: info.player.embedHtml }} />
       </div>

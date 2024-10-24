@@ -10,6 +10,7 @@ import { ISearchFullResponse } from "../../services/Types";
 export const HomePage = () => {
   const [results, setResults] = useState<ISearchFullResponse>();
   const [search, setSearch] = useState("");
+  const [typeOfWrapper, setTypeOfWrapper] = useState("table");
   const handlerSearch = async () => {
     const result = await searchApi.getVideos(search);
     if (result) {
@@ -34,12 +35,26 @@ export const HomePage = () => {
               <span className={style.amount}>
                 {results.pageInfo.totalResults}
               </span>
-              <img src="/list.svg" alt="list" />
-              <img src="/table.svg" alt="table" />
+              <div className={style.icons}>
+                <img
+                  src="/list.svg"
+                  alt="list"
+                  className={style.icon}
+                  onClick={() => setTypeOfWrapper("list")}
+                  style={{opacity: typeOfWrapper === "list" ? 1 : 0.3}}
+                />
+                <img
+                  src="/table.svg"
+                  alt="table"
+                  className={style.icon}
+                  onClick={() => setTypeOfWrapper("table")}
+                  style={{opacity: typeOfWrapper === "table" ? 1 : 0.3}}
+                />
+              </div>
             </div>
-            <div className={style.videoWrapper}>
+            <div className={style.videoWrapper} style={{flexDirection: typeOfWrapper === "list" ? "column" : "row"}}>
               {results?.items.map((video) => (
-                <Card key={video.id} info={video}></Card>
+                <Card key={video.id} info={video} typeOfWrapper={typeOfWrapper}></Card>
               ))}
             </div>
           </div>
