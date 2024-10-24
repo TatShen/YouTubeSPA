@@ -4,6 +4,7 @@ import { Input } from "../Input/Input";
 import style from "./Modal.module.css";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { userApi } from "../../services/User.service";
+import { useNavigate } from "react-router-dom";
 
 export const Modal = () => {
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
@@ -11,6 +12,7 @@ export const Modal = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("")
   const [isRegistration, setIsRegistration] = useState(false);
+  const navigate = useNavigate()
  
   const onFormSubmitHandler = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -19,7 +21,8 @@ export const Modal = () => {
     }
     
     const data = await userApi.login({login, password})
-    console.log(data)
+    localStorage.setItem("token", data.access_token)
+    navigate("/home")
   };
 
   return (

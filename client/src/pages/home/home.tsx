@@ -1,38 +1,50 @@
 import { useState } from "react";
-import { Button } from "../../components/Button/Button";
-import { Input } from "../../components/Input/Input";
 
 import style from "./home.module.css";
-import { IoHeartOutline } from "react-icons/io5";
+import { Header } from "../../components/Header/Header";
+import { searchApi } from "../../services/Search.service";
+import { Search } from "../../components/Search/Search";
+import { Card } from "../../components/Card/Card";
+import { ISearchFullResponse } from "../../services/Types";
 
 export const HomePage = () => {
-  const [results, setResults] = useState(["k"]);
+  const [results, setResults] = useState<ISearchFullResponse>();
   const [search, setSearch] = useState("");
-  const handlerSearch = () => {
-    console.log(search)
-    setResults(["jjj"])
-  }
+  const handlerSearch = async () => {
+    const result = await searchApi.getVideos(search);
+    if (result) {
+      setResults(result);
+    }
+  };
   return (
-    <div className={style.container}>
-      <div className={results.length ? style.search_on_top : style.search}>
-        <h1 className={style.search_title}>Поиск видео</h1>
-        <div className={style.input_div}>
-          <Input
-            type="text"
-            value={search}
-            placeholder={"Что хотите посмотреть?"}
-            className={style.search_input}
-            handler={(e) => setSearch(e.target.value)}
-            icon={results.length && <IoHeartOutline/>}
-          />
-          <Button
-            type={"button"}
-            content={"Найти"}
-            className={style.search_button}
-            onClick={handlerSearch}
-          />
-        </div>
+    <>
+      <Header />
+      <div className={style.container}>
+        <Search
+          results={results?.items}
+          search={search}
+          setSearch={setSearch}
+          handlerSearch={handlerSearch}
+        />
+        {results?.items.length && (
+          <div className={style.result}>
+            <div className={style.searchValue}>
+              <span>Видео по запросу </span>
+              <span className={style.value}> «{search}» </span>
+              <span className={style.amount}>
+                {results.pageInfo.totalResults}
+              </span>
+              <img src="/list.svg" alt="list" />
+              <img src="/table.svg" alt="table" />
+            </div>
+            <div className={style.videoWrapper}>
+              {results?.items.map((video) => (
+                <Card key={video.id} info={video}></Card>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </>
   );
 };

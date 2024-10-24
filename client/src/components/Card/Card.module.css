@@ -1,0 +1,67 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 23%;
+}
+
+.card iframe {
+  width: 100%;
+  height: auto;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 0 5px;
+}
+.title {
+  width: 100%;
+  height: 40px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 114%;
+  margin: 0;
+  color: #000;
+  text-align: left;
+  display: -webkit-box;             
+  -webkit-box-orient: vertical;     
+  -webkit-line-clamp: 2;             
+  overflow: hidden;          
+  text-overflow: ellipsis;        
+  max-width: 100%;     
+}
+
+.channel,
+.viewCount {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 114%;
+  color: rgba(23, 23, 25, 0.3);
+  text-align: left;
+  white-space: nowrap;       
+  overflow: hidden;         
+  text-overflow: ellipsis; 
+  max-width: 100%;    
+}
+
+.spinner {
+    width: 40px;              
+    height: 40px;             
+    border: 4px solid rgba(0, 0, 0, 0.2); 
+    border-top: 4px solid #3498db;
+    border-radius: 50%;       
+    animation: spin 1s linear infinite; 
+    display: flex;            
+    justify-content: center;   
+    align-items: center;       
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+  }
+
+ 

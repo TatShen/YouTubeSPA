@@ -1,24 +1,24 @@
 
-import instance from '../utils/axios'; 
+import {instance} from '../utils/axios'; 
 
-interface UserData {
+interface IUserData {
   login: string;
   password: string;
 }
 
-interface ApiResponse {
+interface IApiResponse {
   message: string;
 }
 
-interface ApiUser {
+interface IApiUser {
   access_token: string;
   requests: string[]
 }
 
 class UserApi {
-  async registration(userData: UserData): Promise<ApiResponse> {
+  async registration(userData: IUserData): Promise<IApiResponse> {
     try {
-      const { data } = await instance.post<ApiResponse>('/users/registration', userData);
+      const { data } = await instance.post<IApiResponse>('/users/registration', userData);
       return data;
     } catch (error) {
       console.error('Ошибка при регистрации:', error);
@@ -26,9 +26,9 @@ class UserApi {
     }
   }
 
-  async login(userData: UserData): Promise<ApiUser> {
+  async login(userData: IUserData): Promise<IApiUser> {
     try {
-      const { data } = await instance.post<ApiUser>('/users/login', userData);
+      const { data } = await instance.post<IApiUser>('/users/login', userData);
       return data;
     } catch (error) {
       console.error('Ошибка входа:', error);
