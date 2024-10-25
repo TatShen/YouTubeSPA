@@ -37,6 +37,7 @@
   }
   
   .input_div {
+    position: relative;
     display: flex;
     justify-content: space-between;
     border: 1px solid rgba(23, 23, 25, 0.2);
@@ -55,4 +56,16 @@
     width: 150px;
     height: 52px;
     border-radius: 0;
+  }
+
+  .icon {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+    cursor: pointer;
+    color: #d1d1d1;
+    font-size: 24px;
+    cursor: pointer;
   }

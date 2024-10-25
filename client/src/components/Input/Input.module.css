@@ -21,12 +21,3 @@
   width: 100%;
 }
 
-.icon {
-  position: absolute;
-  top: 15px;
-  right: 10px;
-  cursor: pointer;
-  color: #d1d1d1;
-  width: 24px;
-  height: 24px;
-}

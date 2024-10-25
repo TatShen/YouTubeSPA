@@ -2,14 +2,15 @@ import React from "react";
 import style from "./Search.module.css";
 import { Input } from "../Input/Input";
 import { Button } from "../Button/Button";
-import { IVideo } from "../../services/Search.service";
 import { IoHeartOutline } from "react-icons/io5";
+import { IFullVideo } from "../../services/Types";
 
 interface ISearchProps {
-  results?: IVideo[];
+  results?: IFullVideo[];
   search: string;
   setSearch: (value: string) => void;
   handlerSearch: () => void;
+  setIsModalActive: (value: boolean) => void;
 }
 
 export const Search: React.FC<ISearchProps> = ({
@@ -17,6 +18,7 @@ export const Search: React.FC<ISearchProps> = ({
   search,
   setSearch,
   handlerSearch,
+  setIsModalActive
 }) => {
   return (
     <div className={results?.length ? style.search_on_top : style.search}>
@@ -28,8 +30,12 @@ export const Search: React.FC<ISearchProps> = ({
           placeholder={"Что хотите посмотреть?"}
           className={style.search_input}
           handler={(e) => setSearch(e.target.value)}
-          icon={results?.length && <IoHeartOutline />}
         />
+        {results?.length && (
+          <div className={style.icon} onClick={() => setIsModalActive(true)}>
+            <IoHeartOutline />
+          </div>
+        )}
         <Button
           type={"button"}
           content={"Найти"}
