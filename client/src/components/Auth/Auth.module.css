@@ -1,0 +1,38 @@
+.modal_container {
+  width: 510px;
+  height: 520px;
+  border: 1px solid rgba(39, 39, 39, 0.1);
+  border-radius: 0.31rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 80px;
+}
+
+h1 {
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 156%;
+  text-align: center;
+  color: #000;
+}
+
+.input {
+  width: 334px;
+  height: 48px;
+}
+
+.change_form{
+  background-color: transparent;
+  border: none;
+  color: rgba(23, 23, 25, 0.3);
+  margin-top: 32px;
+}
+
+.change_form:hover{
+  border: none;
+  color: #000;
+}

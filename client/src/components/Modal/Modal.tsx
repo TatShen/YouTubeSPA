@@ -1,74 +1,41 @@
-import { useState } from "react";
-import { Button } from "../Button/Button";
-import { Input } from "../Input/Input";
+import React from "react";
 import style from "./Modal.module.css";
-import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-import { userApi } from "../../services/User.service";
-import { useNavigate } from "react-router-dom";
+import { Input } from "../Input/Input";
+import { Button } from "../Button/Button";
 
-export const Modal = () => {
-  const [isPasswordHidden, setIsPasswordHidden] = useState(true);
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("")
-  const [isRegistration, setIsRegistration] = useState(false);
-  const navigate = useNavigate()
- 
-  const onFormSubmitHandler = async(e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if(isRegistration && password===repeatPassword){
-      await userApi.registration({login, password})
-    }
-    
-    const data = await userApi.login({login, password})
-    localStorage.setItem("token", data.access_token)
-    navigate("/home")
-  };
-
+export const Modal: React.FC = () => {
   return (
-    <div className={style.modal_container}>
-      <img src="/logo.svg" alt="Logo" />
-      <h1>{isRegistration ? "Регистрация" : "Вход"}</h1>
-      <form onSubmit={onFormSubmitHandler}>
+    <div className={style.mask}>
+      <div className={style.modal}>
+        <h1>Сохранить запрос</h1>
         <Input
           type="text"
-          label="Логин"
+          label="Запрос"
           className={style.input}
-          value={login}
-          handler={(e) => setLogin(e.target.value)}
+          value={"jjj"}
+          readonly={true}
         />
         <Input
-          type={isPasswordHidden ? "password" : "text"}
-          label="Пароль"
+          type="text"
+          label="Название"
           className={style.input}
-          icon={isPasswordHidden ? <IoEyeOffOutline /> : <IoEyeOutline />}
-          onClick={() => setIsPasswordHidden(!isPasswordHidden)}
-          value={password}
-          handler={(e) => setPassword(e.target.value)}
+          value={"jjj"}
+          readonly={true}
+          placeholder="Укажите название"
         />
-        {isRegistration && (
-          <Input
-            type={isPasswordHidden ? "password" : "text"}
-            label="Повторите пароль"
-            className={style.input}
-            icon={isPasswordHidden ? <IoEyeOffOutline /> : <IoEyeOutline />}
-            onClick={() => setIsPasswordHidden(!isPasswordHidden)}
-            value={repeatPassword}
-            handler={(e) => setRepeatPassword(e.target.value)}
-          />
-        )}
         <Button
-          type="submit"
-          content={isRegistration ? "Зарегистрироваться" : "Войти"}
+          type="button"
+          content={"Не сохранять"}
+          className={style.change_form}
+          onClick={() => {}}
         />
-      </form>
-
-      <Button
-        type="button"
-        content={isRegistration ? "Вход" : "Регистрация"}
-        className={style.change_form}
-        onClick={() => setIsRegistration(!isRegistration)}
-      />
+        <Button
+          type="button"
+          content={"Сохранить"}
+          className={style.change_form}
+          onClick={() => {}}
+        />
+      </div>
     </div>
   );
 };

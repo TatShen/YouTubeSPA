@@ -10,6 +10,7 @@ interface IInputProps {
   className?: string;
   onClick?: () => void;
   value: string
+  readonly?: boolean
 }
 export const Input: React.FC<IInputProps> = ({
   type,
@@ -19,6 +20,7 @@ export const Input: React.FC<IInputProps> = ({
   placeholder,
   className,
   onClick,
+  readonly
 }) => {
   return (
     <div className={style.input_container}>
@@ -29,6 +31,7 @@ export const Input: React.FC<IInputProps> = ({
           type={type}
           onChange={handler}
           className={className}
+          readOnly={readonly}
         />
         {icon && (
           <span className={style.icon} onClick={onClick}>
