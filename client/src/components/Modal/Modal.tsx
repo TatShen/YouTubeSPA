@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import style from "./Modal.module.css";
 import { Input } from "../Input/Input";
 import { Button } from "../Button/Button";
 
-export const Modal: React.FC = () => {
+interface IModalProps{
+  searchValue: string
+}
+
+export const Modal: React.FC<IModalProps> = ({searchValue}) => {
+  const [nameOfRequest, setNameOfRequest] = useState("")
   return (
     <div className={style.mask}>
       <div className={style.modal}>
@@ -12,16 +17,16 @@ export const Modal: React.FC = () => {
           type="text"
           label="Запрос"
           className={style.input}
-          value={"jjj"}
+          value={searchValue}
           readonly={true}
         />
         <Input
           type="text"
           label="Название"
           className={style.input}
-          value={"jjj"}
-          readonly={true}
+          value={nameOfRequest}
           placeholder="Укажите название"
+          handler={(e) => setNameOfRequest(e.target.value)}
         />
         <Button
           type="button"
