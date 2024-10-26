@@ -1,10 +1,12 @@
-import { NavLink } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import style from "./Header.module.css"
 import { Button } from "../Button/Button"
 
 export const Header = () => {
+  const navigate = useNavigate()
     const logout = () => {
-
+      localStorage.clear()
+      navigate("/login")
     }
     return <div className={style.container}>
       <div className={style.header}>

@@ -1,4 +1,5 @@
 
+import { IRequest } from '../redux/actions/requestAction';
 import {instance} from '../utils/axios'; 
 
 interface IUserData {
@@ -18,7 +19,7 @@ interface IApiUser {
 class UserApi {
   async registration(userData: IUserData): Promise<IApiResponse> {
     try {
-      const { data } = await instance.post<IApiResponse>('/users/registration', userData);
+      const { data } = await instance.post<IApiResponse>('/registration', userData);
       return data;
     } catch (error) {
       console.error('Ошибка при регистрации:', error);
@@ -28,7 +29,7 @@ class UserApi {
 
   async login(userData: IUserData): Promise<IApiUser> {
     try {
-      const { data } = await instance.post<IApiUser>('/users/login', userData);
+      const { data } = await instance.post<IApiUser>('/login', userData);
       return data;
     } catch (error) {
       console.error('Ошибка входа:', error);
@@ -37,25 +38,45 @@ class UserApi {
   }
 
 
-  // async getUser() {
-  //   try {
-  //     const token = localStorage.getItem('token');
+  async getUser() {
+    try {
+      const token = localStorage.getItem('token');
 
-  //     if (!token) {
-  //       throw new Error('Токен не найден');
-  //     }
-  //     const { data } = await instance.get('/', {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
+      if (!token) {
+        throw new Error('Токен не найден');
+      }
+      const { data } = await instance.get('/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  //     return data;
-  //   } catch (error) {
-  //     console.error('Ошибка при получении данных пользователя:', error);
-  //     throw error;
-  //   }
-  // }
+      return data;
+    } catch (error) {
+      console.error('Ошибка при получении данных пользователя:', error);
+      throw error;
+    }
+  }
+
+  async addRequest(value:IRequest){
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        throw new Error('Токен не найден');
+      }
+      const { data } = await instance.post('/', value, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+
+      return data;
+    } catch (error) {
+      console.error('Ошибка при сохранении запроса:', error);
+      throw error;
+    }
+  }
 }
 
 export const userApi = new UserApi();

@@ -39,7 +39,7 @@ export const HomePage = () => {
   return (
     <>
       <Header />
-      {isModalActive && <Modal searchValue={search}/>}
+      {isModalActive && <Modal searchValue={search} setIsModalActive={setIsModalActive}/>}
       <div className={style.container}>
         <Search
           results={results?.videos}

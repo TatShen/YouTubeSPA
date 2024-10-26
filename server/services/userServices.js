@@ -1,4 +1,4 @@
-const { Users } = require("../models/models");
+const { Users, Request } = require("../models/models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -7,18 +7,17 @@ class UserServices {
     try {
       if (await Users.findOne({ where: { login } })) {
         res.status(400).json({ message: "Такой пользователь уже существует" });
-        return
+        return;
       }
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       await Users.create({ login, password: hashedPassword });
       res
         .status(200)
-        .json({ message: "Пользователь успешно зарегистрирован!" })
-        return
-        
+        .json({ message: "Пользователь успешно зарегистрирован!" });
+      return;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       res.status(500).json({ message: "Ошибка регистрации пользователя" });
     }
   }
@@ -28,29 +27,58 @@ class UserServices {
       const user = await Users.findOne({ where: { login } });
       if (!user) {
         res.status(401).json({ message: "Неверный логин или пароль" });
-        return
+        return;
       }
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         res.status(401).json({ message: "Неверный логин или пароль" });
-        return
+        return;
       }
       const token = jwt.sign({ userId: user.id }, process.env.SECRET_KEY, {
-        expiresIn: "2h",
+        expiresIn: "12h",
       });
       res.status(200).json({ access_token: token, requests: user.requests });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       res.status(500).json({ message: "Ошибка сервера" });
     }
   }
 
   async getUser(req, res) {
     try {
-      const user = await Users.findByPk(req.userId);
-      if (user) {
-        res.status(200).json({ user: user });
+      const user = await Users.findByPk(req.userId, {
+        include: [
+          {
+            model: Request,
+            through: { attributes: [] },
+          },
+        ],
+      });
+      if (!user) {
+        res.status(401).send("Пользователь не авторизован!");
       }
+
+      res.status(200).json({ user: user });
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка сервера" });
+    }
+  }
+
+  async addRequest(req, res) {
+    try {
+      const user = await Users.findByPk(req.userId);
+      if (!user) {
+        res.status(401).send("Пользователь не авторизован!");
+      }
+
+      await Request.create(req.body);
+
+      if (!Array.isArray(user.requests)) {
+        user.requests = [];
+      }
+      user.requests = [...user.requests, req.body.request];
+      await user.save();
+      res.status(200).json({ user: user });
     } catch (error) {
       res.status(500).json({ message: "Ошибка сервера" });
     }

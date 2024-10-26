@@ -24,7 +24,23 @@ class UserControllers {
   }
 
   async getUser(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ errors: errors.array().map((item) => item.msg) });
+    }
     await userServices.getUser(req, res);
+  }
+
+  async addRequest(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ errors: errors.array().map((item) => item.msg) });
+    }
+    await userServices.addRequest(req, res);
   }
 }
 

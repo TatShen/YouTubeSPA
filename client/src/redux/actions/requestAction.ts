@@ -3,7 +3,7 @@ export const ADD_REQUEST = "ADD_REQUEST"
 export type IRequest = {
     request: string
     name: string
-    sort?:string
+    sort?:string | null
     limit: number
 }
 

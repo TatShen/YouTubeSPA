@@ -13,7 +13,7 @@
 
 .modal {
   width: 510px;
-  height: 520px;
+  height: 573px;
   border: 1px solid rgba(39, 39, 39, 0.1);
   border-radius: 0.31rem;
   display: flex;
@@ -21,20 +21,27 @@
   justify-content: flex-start;
   align-items: center;
   gap: 20px;
-  padding: 40px 80px;
+  padding: 40px;
   background-color: white;
+  box-sizing: border-box;
 }
 
-.input {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.form {
   width: 100%;
-  height: 48px;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 120%;
-  color: #272727;
-  opacity: 0.3;
 }
 
+.title {
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 156%;
+  text-align: center;
+  color: #000;
+}
+
+.select {
+  text-align: left;
+}
+.button {
+  width: 210px;
+  height: 52px;
+}

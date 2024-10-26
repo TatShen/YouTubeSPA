@@ -10,4 +10,6 @@ router.post("/login",validateBodyUser, userControllers.login)
 
 router.get("/", authenticateToken, userControllers.getUser)
 
+router.post("/", authenticateToken, userControllers.addRequest)
+
 module.exports = router
