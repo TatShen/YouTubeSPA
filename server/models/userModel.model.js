@@ -10,10 +10,6 @@ const User = sequelize.define("User", {
     },
     password:{
         type: DataTypes.STRING
-    },
-    requests:{
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: true
     }
 })
 

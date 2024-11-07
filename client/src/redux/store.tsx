@@ -1,16 +1,16 @@
 import { legacy_createStore as createStore, combineReducers } from 'redux';
 import {composeWithDevTools } from "redux-devtools-extension"
 import videosReducer, { IInitialVideoState } from './reducers/videoReducer';
-import requestsReducer, { IInitialRequestState } from './reducers/requestReducer';
+import userReducer, { IInitialUserState } from './reducers/userReducer';
 
 export type IRootSate = {
     video: IInitialVideoState,
-    request: IInitialRequestState
+    user: IInitialUserState
 }
 
 const rootReducer = combineReducers({
   video: videosReducer,
-  request: requestsReducer
+  user: userReducer
 
 });
 

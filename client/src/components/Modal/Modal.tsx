@@ -11,7 +11,7 @@ import {
   Row,
   Slider,
 } from "antd";
-import { IRequest } from "../../redux/actions/requestAction";
+import { IRequest } from "../../redux/actions/userAction";
 import { userApi } from "../../services/User.service";
 
 const { Option } = Select;
@@ -48,19 +48,18 @@ export const Modal: React.FC<IModalProps> = ({
     }
   };
 
-
   const onChange = (newValue: number | null) => {
     if (newValue) {
       setLimit(newValue);
     }
   };
 
-  const onFinish = async(values: IRequest) => {
-    values.sort = values.sort || null
-    values.limit = limit
-    const data = await userApi.addRequest(values)
-    if (data){
-      setIsModalActive(false)
+  const onFinish = async (values: IRequest) => {
+    values.sort = values.sort || null;
+    values.limit = limit;
+    const data = await userApi.addRequest(values);
+    if (data) {
+      setIsModalActive(false);
     }
   };
 

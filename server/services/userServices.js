@@ -66,20 +66,33 @@ class UserServices {
 
   async addRequest(req, res) {
     try {
-      const user = await Users.findByPk(req.userId);
+      const user = await Users.findByPk(req.userId, {
+        attributes: { exclude: ["password"] },
+        include: [
+          {
+            model: Request,
+            as: "Requests",
+            attributes: ["request", "name", "sort", "limit"],
+          },
+        ],
+      });
       if (!user) {
         res.status(401).send("Пользователь не авторизован!");
       }
-
-      await Request.create(req.body);
+      console.log(req.userId)
 
       if (!Array.isArray(user.requests)) {
         user.requests = [];
       }
-      user.requests = [...user.requests, req.body.request];
-      await user.save();
+      const newRequest = await Request.create({ userId: req.userId, ...req.body });
+
+      await user.addRequest(newRequest);
+
+      await user.reload();
+
       res.status(200).json({ user: user });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ message: "Ошибка сервера" });
     }
   }

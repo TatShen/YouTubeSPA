@@ -1,5 +1,5 @@
 const sequelize = require("../config/db");
-const { DataTypes } = require ("sequelize")
+const { DataTypes } = require("sequelize");
 const Users = require("./userModel.model");
 const Request = require("./requestModel");
 
@@ -8,21 +8,24 @@ const UserRequests = sequelize.define("UserRequests", {
     type: DataTypes.INTEGER,
     references: {
       model: Users,
-      key: 'id',
+      key: "id",
     },
   },
   RequestId: {
     type: DataTypes.INTEGER,
     references: {
       model: Request,
-      key: 'id',
+      key: "id",
     },
   },
 });
 
-Request.belongsToMany(Users, { through: UserRequests });
-Users.belongsToMany(Request, { through: UserRequests });
-
+Users.hasMany(Request, {
+  foreignKey: "userId",
+});
+Request.belongsTo(Users, {
+  foreignKey: "userId",
+});
 
 (async () => {
   try {

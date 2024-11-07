@@ -2,6 +2,10 @@ const { DataTypes } = require ("sequelize")
 const sequelize = require("../config/db")
 
 const Request = sequelize.define("Request", {
+    userId:{
+        type:DataTypes.INTEGER,
+        allowNull: false
+    },
     request:{
         type:DataTypes.STRING,
         allowNull:false
@@ -10,13 +14,16 @@ const Request = sequelize.define("Request", {
         type:DataTypes.STRING,
         allowNull:false
     },
-    rating:{
-        type:DataTypes.INTEGER,
+    sort:{
+        type:DataTypes.STRING,
         allowNull:true
     },
     limit:{
         type: DataTypes.INTEGER,
-        allowNull:false,        
+        allowNull:false,
+        validator:{
+            max:50
+        }        
     }
 })
 

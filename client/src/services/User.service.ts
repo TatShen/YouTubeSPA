@@ -1,6 +1,5 @@
-
-import { IRequest } from '../redux/actions/requestAction';
-import {instance} from '../utils/axios'; 
+import { IRequest } from "../redux/actions/userAction";
+import { instance } from "../utils/axios";
 
 interface IUserData {
   login: string;
@@ -13,39 +12,41 @@ interface IApiResponse {
 
 interface IApiUser {
   access_token: string;
-  requests: string[]
+  requests: string[];
 }
 
 class UserApi {
   async registration(userData: IUserData): Promise<IApiResponse> {
     try {
-      const { data } = await instance.post<IApiResponse>('/registration', userData);
+      const { data } = await instance.post<IApiResponse>(
+        "/registration",
+        userData
+      );
       return data;
     } catch (error) {
-      console.error('Ошибка при регистрации:', error);
+      console.error("Ошибка при регистрации:", error);
       throw error;
     }
   }
 
   async login(userData: IUserData): Promise<IApiUser> {
     try {
-      const { data } = await instance.post<IApiUser>('/login', userData);
+      const { data } = await instance.post<IApiUser>("/login", userData);
       return data;
     } catch (error) {
-      console.error('Ошибка входа:', error);
+      console.error("Ошибка входа:", error);
       throw error;
     }
   }
 
-
   async getUser() {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
       if (!token) {
-        throw new Error('Токен не найден');
+        throw new Error("Токен не найден");
       }
-      const { data } = await instance.get('/', {
+      const { data } = await instance.get("/", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -53,27 +54,27 @@ class UserApi {
 
       return data;
     } catch (error) {
-      console.error('Ошибка при получении данных пользователя:', error);
+      console.error("Ошибка при получении данных пользователя:", error);
       throw error;
     }
   }
 
-  async addRequest(value:IRequest){
+  async addRequest(value: IRequest) {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
       if (!token) {
-        throw new Error('Токен не найден');
+        throw new Error("Токен не найден");
       }
-      const { data } = await instance.post('/', value, {
+      const { data } = await instance.post("/", value, {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       });
 
       return data;
     } catch (error) {
-      console.error('Ошибка при сохранении запроса:', error);
+      console.error("Ошибка при сохранении запроса:", error);
       throw error;
     }
   }
