@@ -1,7 +1,7 @@
 const { DataTypes } = require ("sequelize")
 const sequelize = require("../config/db")
 
-const Request = sequelize.define("Request", {
+const Request = sequelize.define("request", {
     userId:{
         type:DataTypes.INTEGER,
         allowNull: false

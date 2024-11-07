@@ -18,6 +18,7 @@ export const Auth = () => {
     e.preventDefault();
     if(isRegistration && password===repeatPassword){
       await userApi.registration({login, password})
+      return
     }
     
     const data = await userApi.login({login, password})

@@ -5,6 +5,7 @@ export type IRequest = {
     name: string
     sort?:string | null
     limit: number
+    id: number
 }
 
 export type IUser = {

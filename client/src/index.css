@@ -43,6 +43,11 @@ h1 {
   line-height: 1.1;
 }
 
+h1,
+h2 {
+  font-family: "Roboto_Medium", sans-serif;
+}
+
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -55,7 +60,7 @@ button {
   transition: border-color 0.25s;
 }
 button:hover {
-  border: 2px solid  #030657;
+  border: 2px solid #030657;
 }
 button:focus,
 button:focus-visible {
@@ -81,6 +86,11 @@ input:focus {
 @font-face {
   font-family: "Roboto";
   src: url(/fonts/Roboto.ttf);
+}
+
+@font-face {
+  font-family: "Roboto_Medium";
+  src: url(/fonts/Roboto_Medium.ttf);
 }
 
 @font-face {

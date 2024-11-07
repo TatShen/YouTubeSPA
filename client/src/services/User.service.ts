@@ -1,4 +1,4 @@
-import { IRequest } from "../redux/actions/userAction";
+import { IRequest, IUser } from "../redux/actions/userAction";
 import { instance } from "../utils/axios";
 
 interface IUserData {
@@ -12,7 +12,7 @@ interface IApiResponse {
 
 interface IApiUser {
   access_token: string;
-  requests: string[];
+  user: IUser;
 }
 
 class UserApi {

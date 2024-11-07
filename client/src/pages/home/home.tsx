@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import style from "./home.module.css";
-import { Header } from "../../components/Header/Header";
 import { searchApi } from "../../services/Search.service";
 import { Search } from "../../components/Search/Search";
 import { Card } from "../../components/Card/Card";
@@ -38,7 +37,6 @@ export const HomePage = () => {
   
   return (
     <>
-      <Header />
       {isModalActive && <Modal searchValue={search} setIsModalActive={setIsModalActive}/>}
       <div className={style.container}>
         <Search

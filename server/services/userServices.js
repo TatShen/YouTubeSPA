@@ -24,7 +24,9 @@ class UserServices {
 
   async login({ login, password }, res) {
     try {
-      const user = await Users.findOne({ where: { login } });
+      const user = await Users.findOne({
+        where: { login },
+      });
       if (!user) {
         res.status(401).json({ message: "Неверный логин или пароль" });
         return;
@@ -37,7 +39,8 @@ class UserServices {
       const token = jwt.sign({ userId: user.id }, process.env.SECRET_KEY, {
         expiresIn: "12h",
       });
-      res.status(200).json({ access_token: token, requests: user.requests });
+
+      res.status(200).json({ access_token: token });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Ошибка сервера" });
@@ -47,10 +50,12 @@ class UserServices {
   async getUser(req, res) {
     try {
       const user = await Users.findByPk(req.userId, {
+        attributes: { exclude: ["password"] },
         include: [
           {
             model: Request,
-            through: { attributes: [] },
+            as: "requests",
+            attributes: ["request", "name", "sort", "limit", "id"],
           },
         ],
       });
@@ -60,6 +65,7 @@ class UserServices {
 
       res.status(200).json({ user: user });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ message: "Ошибка сервера" });
     }
   }
@@ -71,7 +77,7 @@ class UserServices {
         include: [
           {
             model: Request,
-            as: "Requests",
+            as: "requests",
             attributes: ["request", "name", "sort", "limit"],
           },
         ],
@@ -79,12 +85,14 @@ class UserServices {
       if (!user) {
         res.status(401).send("Пользователь не авторизован!");
       }
-      console.log(req.userId)
 
       if (!Array.isArray(user.requests)) {
         user.requests = [];
       }
-      const newRequest = await Request.create({ userId: req.userId, ...req.body });
+      const newRequest = await Request.create({
+        userId: req.userId,
+        ...req.body,
+      });
 
       await user.addRequest(newRequest);
 

@@ -11,8 +11,9 @@ import {
   Row,
   Slider,
 } from "antd";
-import { IRequest } from "../../redux/actions/userAction";
+import { getUser, IRequest } from "../../redux/actions/userAction";
 import { userApi } from "../../services/User.service";
+import { useDispatch } from "react-redux";
 
 const { Option } = Select;
 
@@ -28,6 +29,7 @@ export const Modal: React.FC<IModalProps> = ({
   searchValue,
   setIsModalActive,
 }) => {
+  const dispatch = useDispatch()
   const [, setNameOfRequest] = useState("");
   const [limit, setLimit] = useState(25);
   const [form] = Form.useForm();
@@ -60,6 +62,7 @@ export const Modal: React.FC<IModalProps> = ({
     const data = await userApi.addRequest(values);
     if (data) {
       setIsModalActive(false);
+      dispatch(getUser(data.user))
     }
   };
 
