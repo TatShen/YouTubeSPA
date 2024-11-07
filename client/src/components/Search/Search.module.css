@@ -1,71 +1,97 @@
 .search {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    justify-content: center;
-    align-items: center;
-    height: 80%;
-  }
-  
-  .search_on_top {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-    .search_title {
-      font-family: var(--font-family);
-      font-weight: 400;
-      font-size: 28px;
-      line-height: 143%;
-      color: #000;
-    }
-    .input_div {
-      width: 100%;
-  
-      .search_input {
-        width: 100%;
-      }
-    }
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+}
+
+.search_on_top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
   .search_title {
     font-family: var(--font-family);
     font-weight: 400;
-    font-size: 36px;
-    line-height: 144%;
-    text-align: center;
+    font-size: 28px;
+    line-height: 143%;
     color: #000;
   }
-  
   .input_div {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    border: 1px solid rgba(23, 23, 25, 0.2);
-    border-radius: 5px;
-    width: 686px;
-    height: 52px;
-  }
-  
-  .search_input {
-    width: 536px;
-    height: 52px;
-    border: none;
-  }
-  
-  .search_button {
-    width: 150px;
-    height: 52px;
-    border-radius: 0;
-  }
+    width: 100%;
 
-  .icon {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    margin-right: 15px;
-    cursor: pointer;
-    color: #d1d1d1;
-    font-size: 24px;
-    cursor: pointer;
+    .search_input {
+      width: 100%;
+    }
   }
+}
+.search_title {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 144%;
+  text-align: center;
+  color: #000;
+}
+
+.input_div {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid rgba(23, 23, 25, 0.2);
+  border-radius: 5px;
+  width: 686px;
+  height: 52px;
+}
+
+.search_input {
+  width: 536px;
+  height: 52px;
+  border: none;
+}
+
+.search_button {
+  width: 150px;
+  height: 52px;
+  border-radius: 0;
+}
+
+.icon {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  cursor: pointer;
+  color: #d1d1d1;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.tooltip {
+  width: 232px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 25px 15px;
+}
+
+.tooltipTitle {
+  font-family: var(--second-family);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  color: #000;
+}
+
+.tooltipLink {
+  font-family: var(--second-family);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  color: #1390e5;
+  margin: 0;
+}
