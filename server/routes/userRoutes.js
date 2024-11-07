@@ -12,4 +12,6 @@ router.get("/", authenticateToken, userControllers.getUser)
 
 router.post("/", authenticateToken, userControllers.addRequest)
 
+router.delete("/:id", authenticateToken, userControllers.deleteRequest)
+
 module.exports = router

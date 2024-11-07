@@ -78,6 +78,26 @@ class UserApi {
       throw error;
     }
   }
+
+  async deleteRequest(value: number) {
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        throw new Error("Токен не найден");
+      }
+      const { data } = await instance.delete(`/${value}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return data;
+    } catch (error) {
+      console.error("Ошибка при сохранении запроса:", error);
+      throw error;
+    }
+  }
 }
 
 export const userApi = new UserApi();

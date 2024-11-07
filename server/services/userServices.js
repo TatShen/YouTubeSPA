@@ -78,7 +78,7 @@ class UserServices {
           {
             model: Request,
             as: "requests",
-            attributes: ["request", "name", "sort", "limit"],
+            attributes: ["request", "name", "sort", "limit", "id"],
           },
         ],
       });
@@ -96,6 +96,37 @@ class UserServices {
 
       await user.addRequest(newRequest);
 
+      await user.reload();
+
+      res.status(200).json({ user: user });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Ошибка сервера" });
+    }
+  }
+
+  async deleteRequest(req, res) {
+    try {
+      const user = await Users.findByPk(req.userId, {
+        attributes: { exclude: ["password"] },
+        include: [
+          {
+            model: Request,
+            as: "requests",
+            attributes: ["request", "name", "sort", "limit", "id"],
+          },
+        ],
+      });
+      if (!user) {
+        res.status(401).send("Пользователь не авторизован!");
+      }
+
+      if (!Array.isArray(user.requests)) {
+        user.requests = [];
+      }
+
+      await Request.destroy({where: {id : req.params.id} })
+    
       await user.reload();
 
       res.status(200).json({ user: user });
