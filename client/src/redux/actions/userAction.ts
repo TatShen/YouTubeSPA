@@ -3,7 +3,7 @@ export const UPDATE_USER = "UPDATE_USER"
 export type IRequest = {
     request: string
     name: string
-    sort?:string | null
+    sort:string 
     limit: number
     id: number
 }

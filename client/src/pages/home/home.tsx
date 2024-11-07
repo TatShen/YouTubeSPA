@@ -1,27 +1,18 @@
 import { useEffect, useState } from "react";
 
 import style from "./home.module.css";
-import { searchApi } from "../../services/Search.service";
 import { Search } from "../../components/Search/Search";
 import { Card } from "../../components/Card/Card";
 import { IFullVideo } from "../../services/Types";
-import { useDispatch, useSelector } from "react-redux";
-import { getVideos } from "../../redux/actions/videoAction";
+import { useSelector } from "react-redux";
 import { IRootSate } from "../../redux/store";
 import { Modal } from "../../components/Modal/Modal";
 
 export const HomePage = () => {
-  const dispatch = useDispatch();
-  const results = useSelector((state: IRootSate) => state.video);
+  const {videos, amountOfVideos, request} = useSelector((state: IRootSate) => state.video);
   const [isModalActive, setIsModalActive] = useState(false)
-  const [search, setSearch] = useState("");
   const [typeOfWrapper, setTypeOfWrapper] = useState("table");
-  const handlerSearch = async () => {
-    const results = await searchApi.getVideos(search);
-    if (results) {
-      dispatch(getVideos(results));
-    }
-  };
+
 
   useEffect(() => {
     if (isModalActive) {
@@ -37,21 +28,17 @@ export const HomePage = () => {
   
   return (
     <>
-      {isModalActive && <Modal searchValue={search} setIsModalActive={setIsModalActive}/>}
+      {isModalActive && <Modal searchValue={request} setIsModalActive={setIsModalActive}/>}
       <div className={style.container}>
         <Search
-          results={results?.videos}
-          search={search}
-          setSearch={setSearch}
-          handlerSearch={handlerSearch}
           setIsModalActive={setIsModalActive}
         />
-        {results?.amountOfVideos && (
+        {amountOfVideos && (
           <div className={style.result}>
             <div className={style.searchValue}>
               <span>Видео по запросу </span>
-              <span className={style.value}> «{search}» </span>
-              <span className={style.amount}>{results.amountOfVideos}</span>
+              <span className={style.value}> «{request}» </span>
+              <span className={style.amount}>{amountOfVideos}</span>
               <div className={style.icons}>
                 <img
                   src="/list.svg"
@@ -75,7 +62,7 @@ export const HomePage = () => {
                 flexDirection: typeOfWrapper === "list" ? "column" : "row",
               }}
             >
-              {results?.videos.map((video: IFullVideo) => (
+              {videos.map((video: IFullVideo) => (
                 <Card
                   key={video.id}
                   info={video}

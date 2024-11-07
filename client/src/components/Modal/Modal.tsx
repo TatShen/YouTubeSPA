@@ -46,7 +46,7 @@ export const Modal: React.FC<IModalProps> = ({
         form.setFieldsValue({ note: "title" });
         break;
       default:
-        form.setFieldsValue({ note: null });
+        form.setFieldsValue({ note: "relevance" });
     }
   };
 
@@ -57,7 +57,7 @@ export const Modal: React.FC<IModalProps> = ({
   };
 
   const onFinish = async (values: IRequest) => {
-    values.sort = values.sort || null;
+    values.sort = values.sort || "relevance";
     values.limit = limit;
     const data = await userApi.addRequest(values);
     if (data) {
