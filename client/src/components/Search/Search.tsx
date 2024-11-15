@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import style from "./Search.module.css";
-import { Input } from "../Input/Input";
+import { Input } from "antd";
 import { Button } from "../Button/Button";
 import { IoHeartOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
@@ -43,47 +43,62 @@ export const Search: React.FC<ISearchProps> = ({ setIsModalActive }) => {
     }
   };
 
+  const onFormSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const results = await searchApi.getVideos(search);
+    if (results) {
+      dispatch(getVideos(results));
+      dispatch(addRequest(search));
+    }
+  };
+
   return (
     <div className={videos?.length ? style.search_on_top : style.search}>
       <h1 className={style.search_title}>Поиск видео</h1>
-      <div className={style.input_div}>
+      <form className={style.input_div} onSubmit={onFormSubmitHandler}>
         <Input
           type="text"
           value={search}
           placeholder={"Что хотите посмотреть?"}
           className={style.search_input}
-          handler={(e) => handlerChangeRequest(e.target.value)}
+          onChange={(e) => handlerChangeRequest(e.target.value)}
+          suffix={
+            search && (
+              <Tooltip
+                placement="bottom"
+                title={
+                  <div className={style.tooltip}>
+                    <span className={style.tooltipTitle}>
+                      Поиск сохранён в разделе «Избранное»
+                    </span>
+                    <a href="/favorite" className={style.tooltipLink}>
+                      Перейти в избранное
+                    </a>
+                  </div>
+                }
+                arrow={true}
+                color={"#fcfafaf1"}
+                open={isFavorite}
+                trigger={"hover"}
+              >
+                <div
+                  className={style.icon}
+                  onClick={() => setIsModalActive(true)}
+                >
+                  <IoHeartOutline color={isFavorite ? "#1890FF" : "#d1d1d1"} />
+                </div>
+              </Tooltip>
+            )
+          }
         />
-        {search && (
-          <Tooltip
-            placement="bottom"
-            title={
-              <div className={style.tooltip}>
-                <span className={style.tooltipTitle}>
-                  Поиск сохранён в разделе «Избранное»
-                </span>
-                <a href="/favorite" className={style.tooltipLink}>
-                  Перейти в избранное
-                </a>
-              </div>
-            }
-            arrow={true}
-            color={"#fcfafaf1"}
-            open={isFavorite}
-            trigger={"hover"}
-          >
-            <div className={style.icon} onClick={() => setIsModalActive(true)}>
-              <IoHeartOutline color={isFavorite ? "#1890FF" : "#d1d1d1"} />
-            </div>
-          </Tooltip>
-        )}
+
         <Button
           type={"button"}
           content={"Найти"}
           className={style.search_button}
           onClick={handlerSearch}
         />
-      </div>
+      </form>
     </div>
   );
 };
