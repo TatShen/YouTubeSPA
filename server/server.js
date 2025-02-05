@@ -1,5 +1,7 @@
 require("dotenv").config();
 const express = require("express");
+const swaggerUi = require('swagger-ui-express')
+const swaggerSpec = require('./swaggerSpec.js')
 const app = express();
 const loggerMiddleware = require("./middleware/loggerMiddleware");
 const routes = require("./routes/index");
@@ -12,6 +14,8 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
   allowedHeaders: ['Content-Type', 'Authorization'] 
 };
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(cors(corsOptions));
 
