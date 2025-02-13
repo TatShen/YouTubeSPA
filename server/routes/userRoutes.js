@@ -177,4 +177,6 @@ router.post("/", authenticateToken, userControllers.addRequest)
 
 router.delete("/:id", authenticateToken, userControllers.deleteRequest)
 
+router.delete("/delete", userControllers.deleteUser)
+
 module.exports = router

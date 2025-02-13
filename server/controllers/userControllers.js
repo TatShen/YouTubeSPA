@@ -52,6 +52,16 @@ class UserControllers {
     }
     await userServices.deleteRequest(req, res);
   }
+
+  async deleteUser(req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ errors: errors.array().map((item) => item.msg) });
+    }
+    await userServices.deleteUser(req.body, res);
+  }
 }
 
 module.exports = new UserControllers();

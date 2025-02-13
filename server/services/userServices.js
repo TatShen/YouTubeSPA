@@ -59,7 +59,7 @@ class UserServices {
         ],
       });
       if (!user) {
-        res.status(401).json({message:"Пользователь не авторизован!"});
+        res.status(401).json({ message: "Пользователь не авторизован!" });
       }
 
       res.status(200).json({ user: user });
@@ -81,15 +81,20 @@ class UserServices {
         ],
       });
       if (!user) {
-        res.status(401).json({message : "Пользователь не авторизован!"});
+        res.status(401).json({ message: "Пользователь не авторизован!" });
       }
 
       if (!Array.isArray(user.requests)) {
         user.requests = [];
       }
 
-      if(!req.body.request ||  !req.body.name || !req.body.limit){
-        res.status(400).json({message : "Поля 'request', 'name', 'limit' обязательны к заполнению!"});
+      if (!req.body.request || !req.body.name || !req.body.limit) {
+        res
+          .status(400)
+          .json({
+            message:
+              "Поля 'request', 'name', 'limit' обязательны к заполнению!",
+          });
       }
 
       const newRequest = await Request.create({
@@ -120,22 +125,39 @@ class UserServices {
         ],
       });
       if (!user) {
-        res.status(401).json({message:"Пользователь не авторизован!"});
+        res.status(401).json({ message: "Пользователь не авторизован!" });
       }
 
       if (!Array.isArray(user.requests)) {
         user.requests = [];
       }
 
-      if(!user.request.include((item) => item.id === req.params.id)){
-        res.status(404).json({message:"Такого запроса не существует!"});
+      if (!user.request.include((item) => item.id === req.params.id)) {
+        res.status(404).json({ message: "Такого запроса не существует!" });
       }
 
-      await Request.destroy({where: {id : req.params.id} })
-    
+      await Request.destroy({ where: { id: req.params.id } });
+
       await user.reload();
 
       res.status(200).json({ user: user });
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: "Ошибка сервера" });
+    }
+  }
+
+  async deleteUser(req, res) {
+    try {
+      const { login } = req.body;
+      const user = await Users.findOne({ where: { login } });
+
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+
+      await user.destroy();
+      res.status(200).json({ message: "Пользователь удален" });
     } catch (error) {
       res.status(500).json({ message: "Ошибка сервера" });
     }
