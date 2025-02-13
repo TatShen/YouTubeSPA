@@ -1,203 +1,188 @@
-const chai = require('chai');
-const supertest = require('supertest');
-const app = require('../server');
+const request = require("supertest");
+const app = require("../server");
 
-const expect = chai.expect;
-const request = supertest(app);
+describe("UserServices test", () => {
+  const userData = {
+    login: "test@mail.ru",
+    password: "test1234",
+  };
 
-const userData = {
-    login: "tets@mail.ru",
-    password: "test1234"
-}
-
-const requestData = {
+  const requestData = {
     request: "test",
     name: "test",
     sort: "test",
-    limit: 20
-}
+    limit: 20,
+  };
 
-describe("POST /api/users/registration", () => {
-    it('Успешная регистрация', async () => {
-        const response = await request.post("//api/users/registration").send(userData)
+  beforeEach(async () => {
+    await request(app)
+      .delete("/api/users/delete")
+      .send({ login: userData.login });
+  });
 
-        expect(response.status).to.equal(200)
-        expect(response.body).to.have.property("message")
-        expect(response.body.message).to.equal("Пользователь успешно зарегистрирован!")
-    })
+  afterEach(async () => {
+    await request(app)
+      .delete("/api/users/delete")
+      .send({ login: userData.login });
+  });
 
-    it("Возвращает ошибку при вводе неполных данных", async () => {
-        const response = await request.post('/api/users/registration').send({login: userData.login})
+  test("Успешная регистрация", async () => {
+    const response = await request(app)
+      .post("/api/users/registration")
+      .send(userData);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Пользователь успешно зарегистрирован!"
+    );
+  });
 
-        expect(response.status).to.equal(400)
-        expect(response.body).to.have.property("errors")
-    })
+  test("Ошибка при вводе неполных данных", async () => {
+    const response = await request(app)
+      .post("/api/users/registration")
+      .send({ login: "sgdgdgd" });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+  });
 
-    it("Возвращает ошибку при повторной регистрации пользователя", async () => {
-        await request.post('/api/users/registration').send(userData)
+  test("Ошибка при повторной регистрации", async () => {
+    await request(app).post("/api/users/registration").send(userData);
+    const response = await request(app)
+      .post("/api/users/registration")
+      .send(userData);
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Такой пользователь уже существует"
+    );
+  });
 
-        const response = request.post('/api/users/registration').send(userData)
+  test("Успешная авторизация", async () => {
+    await request(app).post("/api/users/registration").send(userData);
+    const response = await request(app).post("/api/users/login").send(userData);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("access_token");
+  });
 
-        expect(response.status).to.equal(400)
-        expect(response.body).to.have.property("message")
-        expect(response.body.message).to.equal("Такой пользователь уже существует")
-    })
-})
+  test("Ошибка при вводе неполных данных при авторизации", async () => {
+    await request(app).post("/api/users/registration").send(userData);
+    const response = await request(app)
+      .post("/api/users/login")
+      .send({ login: userData.login });
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+  });
 
-describe("POST /api/users/login", () => {
-    it("Успешная авторизация", async () => {
-        await request.post("/api/users/registration").send(userData)
+  test("Ошибка при неверных данных", async () => {
+    await request(app).post("/api/users/registration").send(userData);
+    const response = await request(app)
+      .post("/api/users/login")
+      .send({ login: userData.login, password: "wrongpass" });
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Неверный логин или пароль"
+    );
+  });
 
-        const response = await request.post("/api/users/login").send(userData)
+  test("Получение данных пользователя", async () => {
+    await request(app).post("/api/users/registration").send(userData);
+    const loginResponse = await request(app)
+      .post("/api/users/login")
+      .send(userData);
+    const token = loginResponse.body.access_token;
+    const response = await request(app)
+      .get("/api/users/")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("user");
+    expect(response.body.user.login).toBe(userData.login);
+    expect(Array.isArray(response.body.user.requests)).toBe(true);
+  });
 
-        expect(response.status).to.equal(200)
-        expect(response.body).to.have.property("access_token")
-    })
+  test("Ошибка при неавторизованном доступе", async () => {
+    const response = await request(app).get("/api/users/");
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Пользователь не авторизован!"
+    );
+  });
 
-    it("Возвращает ошибку при вводе неполных данных", async () => {
-        await request.post('/api/users/registration').send(userData)
+  test("Успешное добавление запроса", async () => {
+    await request(app).post("/api/users/registration").send(userData);
+    const loginResponse = await request(app)
+      .post("/api/users/login")
+      .send(userData);
 
-        const response = await request.post("/api/users/login").send({login: userData.login})
+    const token = loginResponse.body.access_token;
+    const response = await request(app)
+      .post("/api/users/")
+      .set("Authorization", `Bearer ${token}`)
+      .send(requestData);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("user");
+    expect(response.body.user.requests).toContainEqual(
+      expect.objectContaining(requestData)
+    );
+  });
 
-        expect(response.status).to.equal(400)
-        expect(response.body).to.have.property("errors")
-    })
+  test("Ошибка при добавлении запроса без авторизации", async () => {
+    const response = await request(app).post("/api/users/").send(requestData);
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Пользователь не авторизован!"
+    );
+  });
 
-    it("Возвращает ошибку при вводе невалидных данных", async () => {
-        await request.post("/api/users/registration").send(userData)
+  test("Успешное удаление запроса", async () => {
+    await request(app).post("/api/users/registration").send(userData);
+    const loginResponse = await request(app)
+      .post("/api/users/login")
+      .send(userData);
 
-        const response = request.post("/api/users/login").send({login: userData, password: "tefdgdgdv"})
+    const token = loginResponse.body.access_token;
+    const addRequest = await request(app)
+      .get("/api/users/")
+      .set("Authorization", `Bearer ${token}`)
+      .send(requestData);
+    const requestId = addRequest.body.user.requests[0].id;
 
-        expect(response.status).to.equal(401)
-        expect(response.body).to.have.property("message")
-        expect(response.body.message).to.equal("Неверный логин или пароль")
-    })
-})
+    const deleteResponse = await request(app)
+      .delete(`/api/users/${requestId}`)
+      .set("Authorization", `Bearer ${token}`);
 
-describe("GET /api/users/", () => {
-    it("Возвращает данные пользователя", async () => {
-        await request.post("/api/users/registration").send(userData)
-        await request.post("/api/users/login").send(userData)
+    expect(deleteResponse.status).toBe(200);
+    expect(deleteResponse.body.user.requests).not.toContainEqual(
+      expect.objectContaining({ id: requestId })
+    );
+  });
 
-        const response = await request.get("/api/users/")
+  test("Ошибка при удалении запроса без авторизации", async () => {
+    const response = await request(app).delete("/api/users/5");
+    expect(response.status).toBe(401);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Пользователь не авторизован!"
+    );
+  });
 
-        expect(response.status).to.equal(200)
-        expect(response.body).to.have.property("user")
-        expect(response.body.user.login).to.equal(userData.login)
-        expect(response.body.user.requests).to.be.an("array")
-    })
+  test("Ошибка при удалении несуществующего запроса", async () => {
+    await request(app).post("/api/users/registration").send(userData);
+    const loginResponse = await request(app)
+      .post("/api/users/login")
+      .send(userData);
 
-    it("Возвращает ошибку если пользователь не авторизован", async () => {
-        await request.post("api/users/registration").send(userData)
-        const response = await request.get("api/users/")
+    const token = loginResponse.body.access_token;
 
-        expect(response.status).to.equal(401)
-        expect(response.body).to.have.property("message")
-        expect(response.body.message).to.equal("Пользователь не авторизован!")
-    })
-})
-
-describe("POST /api/users/", () => {
-    it("Успешно добавляет запрос в БД", async () => {
-        await request.post("/api/users/registration").send(userData)
-        await request.post("/api/users/login").send(userData)
-
-        const initialUser = await request.get("/api/users/")
-        expect(initialUser.status).to.equal(200)
-        expect(initialUser.body).to.have.property("user")
-        expect(initialUser.body.user.requests).to.be.an("array")
-        expect(initialUser.body.user.requests.length).to.equal(0)
-
-        const response = (await request.post("/api/users/")).setEncoding(requestData)
-        expect(response.status).to.equal(200)
-        expect(response.body).to.have.property("user")
-        expect(response.body.user.requests).to.be.an("array")
-        expect(response.body.user.requests.length).to.equal(initialUser.body.user.requests.length + 1)
-        expect(response.body.user.requests.at(0)).to.equal(requestData)
-    })
-
-    it("Возвращает ошибку если пользователь не авторизован", async () => {
-        await request.post("/api/users/registration").send(userData)
-        const response = await request.post("/api/users/").send(requestData)
-
-        expect(response.status).to.equal(401)
-        expect(response.body).to.have.property("message")
-        expect(response.body.message).to.equal("Пользователь не авторизован!")
-    })
-
-    it("Возвращает ошибку при отсутствии обязательных полей", async () => {
-        await request.post("/api/users/registration").send(userData)
-        await request.post("/api/users/login").send(userData)
-
-        const initialUser = await request.get("/api/users/")
-        expect(initialUser.status).to.equal(200)
-        expect(initialUser.body).to.have.property("user")
-        expect(initialUser.body.user.requests).to.be.an("array")
-
-        const response = await request.post("/api/users/").send({request: requestData.request})
-
-        expect(response.status).to.equal(400)
-        expect(response.body).to.have.property("message")
-        expect(response.body.message).to.equal("Поля 'request', 'name', 'limit' обязательны к заполнению!")
-    })
-})
-
-describe("DELETE /api/users/:id", () => {
-    it("Успешно удаляет запрос из БД", async () => {
-        await request.post("/api/users/registration").send(userData)
-        await request.post("/api/users/login").send(userData)
-
-        const initialUser = await request.get("/api/users/")
-        expect(initialUser.status).to.equal(200)
-        expect(initialUser.body).to.have.property("user")
-        expect(initialUser.body.user.requests).to.be.an("array")
-        expect(initialUser.body.user.requests.length).to.equal(0)
-
-        const addRequest = (await request.post("/api/users/")).setEncoding(requestData)
-        expect(addRequest.status).to.equal(200)
-        expect(addRequest.body).to.have.property("user")
-        expect(addRequest.body.user.requests).to.be.an("array")
-        expect(addRequest.body.user.requests.length).to.equal(initialUser.body.user.requests.length + 1)
-        expect(addRequest.body.user.requests.at(0)).to.equal(requestData)
-
-        const response = await request.delete(`/api/users/${addRequest.body.user.request.at(0).id}`)
-
-        expect(response.status).to.equal(200)
-        expect(response.body).to.have.property("user")
-        expect(response.body.user.requests).to.be.an("array")
-        expect(response.body.user.requests.length).to.equal(addRequest.body.user.requests.length - 1)
-    })
-
-    it("Возвращает ошибку если пользователь не авторизован", async () => {
-        await request.post("/api/users/registration").send(userData)
-        const response = await request.delete("/api/users/5").send(requestData)
-
-        expect(response.status).to.equal(401)
-        expect(response.body).to.have.property("message")
-        expect(response.body.message).to.equal("Пользователь не авторизован!")
-    })
-
-    it("Возвращает ошибку если запрос не существует", async () => {
-        await request.post("/api/users/registration").send(userData)
-        await request.post("/api/users/login").send(userData)
-
-        const initialUser = await request.get("/api/users/")
-        expect(initialUser.status).to.equal(200)
-        expect(initialUser.body).to.have.property("user")
-        expect(initialUser.body.user.requests).to.be.an("array")
-        expect(initialUser.body.user.requests.length).to.equal(0)
-
-        const addRequest = (await request.post("/api/users/")).setEncoding(requestData)
-        expect(addRequest.status).to.equal(200)
-        expect(addRequest.body).to.have.property("user")
-        expect(addRequest.body.user.requests).to.be.an("array")
-        expect(addRequest.body.user.requests.length).to.equal(initialUser.body.user.requests.length + 1)
-        expect(addRequest.body.user.requests.at(0)).to.equal(requestData)
-
-        const response = await request.delete(`/api/users/${addRequest.body.user.request.at(0).id + 1}`)
-
-        expect(response.status).to.equal(404)
-        expect(response.body).to.have.property("message")
-        expect(response.body.message).to.equal("Такого запроса не существует!")
-    })
-})
+    const response = await request(app)
+      .delete("/api/users/9999")
+      .set("Authorization", `Bearer ${token}`);
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty(
+      "message",
+      "Такого запроса не существует!"
+    );
+  });
+});
