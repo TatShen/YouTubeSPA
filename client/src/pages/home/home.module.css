@@ -1,0 +1,72 @@
+.container {
+  width: 100%;
+  max-width: 1280px;
+  height: 100%;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+}
+
+.result{
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.searchValue {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 150%;
+  color: #000;
+}
+
+
+.value {
+  font-family: "Roboto_Medium", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: #272727;
+  margin: 0 5px;
+}
+
+.amount {
+  font-size: 18px;
+  line-height: 150%;
+  color: rgba(23, 23, 25, 0.3);
+}
+
+
+.videoWrapper{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: space-between;
+}
+
+
+.icons{
+  position: absolute;
+  right: 0;
+  display: flex;
+  gap: 15px;
+}
+
+.icon{
+  width: 40px;
+  height: 40px;
+  max-width: none;
+}

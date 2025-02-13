@@ -1,0 +1,47 @@
+.mask {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background-color: rgba(117, 116, 116, 0.473);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+}
+
+.modal {
+  width: 510px;
+  height: 573px;
+  border: 1px solid rgba(39, 39, 39, 0.1);
+  border-radius: 0.31rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+  padding: 40px;
+  background-color: white;
+  box-sizing: border-box;
+}
+
+.form {
+  width: 100%;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 156%;
+  text-align: center;
+  color: #000;
+}
+
+.select {
+  text-align: left;
+}
+.button {
+  width: 210px;
+  height: 52px;
+}
