@@ -39,3 +39,6 @@ sequelize
 app.listen(PORT, () => {
   console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
+
+
+module.exports = app;

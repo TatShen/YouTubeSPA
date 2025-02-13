@@ -1,6 +1,6 @@
 const chai = require('chai');
 const supertest = require('supertest');
-const app = require('./app');
+const app = require('../server');
 
 const expect = chai.expect;
 const request = supertest(app);
@@ -17,26 +17,26 @@ const requestData = {
     limit: 20
 }
 
-describe("POST /registration", () => {
+describe("POST /api/users/registration", () => {
     it('Успешная регистрация', async () => {
-        const response = await request.post("/registration").send(userData)
+        const response = await request.post("//api/users/registration").send(userData)
 
         expect(response.status).to.equal(200)
         expect(response.body).to.have.property("message")
-        expect(response.body.message).to.equal("Пользователь успешно зарегистрирован")
+        expect(response.body.message).to.equal("Пользователь успешно зарегистрирован!")
     })
 
-    it("Возвращает ошибку при вводе непольных данных", async () => {
-        const response = await request.post('/registration').send({login: userData.login})
+    it("Возвращает ошибку при вводе неполных данных", async () => {
+        const response = await request.post('/api/users/registration').send({login: userData.login})
 
         expect(response.status).to.equal(400)
         expect(response.body).to.have.property("errors")
     })
 
     it("Возвращает ошибку при повторной регистрации пользователя", async () => {
-        await request.post('registration').send(userData)
+        await request.post('/api/users/registration').send(userData)
 
-        const response = request.post('registration').send(userData)
+        const response = request.post('/api/users/registration').send(userData)
 
         expect(response.status).to.equal(400)
         expect(response.body).to.have.property("message")
@@ -44,30 +44,29 @@ describe("POST /registration", () => {
     })
 })
 
-describe("POST /login", () => {
+describe("POST /api/users/login", () => {
     it("Успешная авторизация", async () => {
-        await request.post("/registration").send(userData)
+        await request.post("/api/users/registration").send(userData)
 
-        const response = await request.post("/login").send(userData)
+        const response = await request.post("/api/users/login").send(userData)
 
         expect(response.status).to.equal(200)
-        expect(response.body).to.have.property("user")
-        expect(response.body.user.login).to.equal(userData.login)
+        expect(response.body).to.have.property("access_token")
     })
 
-    it("Возвращает ошибку при вводе непольных данных", async () => {
-        await request.post('/registration').send(userData)
+    it("Возвращает ошибку при вводе неполных данных", async () => {
+        await request.post('/api/users/registration').send(userData)
 
-        const response = await request.post("/login").send({login: userData.login})
+        const response = await request.post("/api/users/login").send({login: userData.login})
 
         expect(response.status).to.equal(400)
         expect(response.body).to.have.property("errors")
     })
 
     it("Возвращает ошибку при вводе невалидных данных", async () => {
-        await request.post("/registration").send(userData)
+        await request.post("/api/users/registration").send(userData)
 
-        const response = request.post("/login").send({login: userData, password: "tefdgdgdv"})
+        const response = request.post("/api/users/login").send({login: userData, password: "tefdgdgdv"})
 
         expect(response.status).to.equal(401)
         expect(response.body).to.have.property("message")
@@ -75,12 +74,12 @@ describe("POST /login", () => {
     })
 })
 
-describe("GET /", () => {
+describe("GET /api/users/", () => {
     it("Возвращает данные пользователя", async () => {
-        await request.post("/registration").send(userData)
-        await request.post("/login").send(userData)
+        await request.post("/api/users/registration").send(userData)
+        await request.post("/api/users/login").send(userData)
 
-        const response = await request.get("/")
+        const response = await request.get("/api/users/")
 
         expect(response.status).to.equal(200)
         expect(response.body).to.have.property("user")
@@ -89,8 +88,8 @@ describe("GET /", () => {
     })
 
     it("Возвращает ошибку если пользователь не авторизован", async () => {
-        await request.post("registration").send(userData)
-        const response = await request.get("/")
+        await request.post("api/users/registration").send(userData)
+        const response = await request.get("api/users/")
 
         expect(response.status).to.equal(401)
         expect(response.body).to.have.property("message")
@@ -98,18 +97,18 @@ describe("GET /", () => {
     })
 })
 
-describe("POST /", () => {
+describe("POST /api/users/", () => {
     it("Успешно добавляет запрос в БД", async () => {
-        await request.post("registration").send(userData)
-        await request.post("/login").send(userData)
+        await request.post("/api/users/registration").send(userData)
+        await request.post("/api/users/login").send(userData)
 
-        const initialUser = await request.get("/")
+        const initialUser = await request.get("/api/users/")
         expect(initialUser.status).to.equal(200)
         expect(initialUser.body).to.have.property("user")
         expect(initialUser.body.user.requests).to.be.an("array")
         expect(initialUser.body.user.requests.length).to.equal(0)
 
-        const response = (await request.post("/")).setEncoding(requestData)
+        const response = (await request.post("/api/users/")).setEncoding(requestData)
         expect(response.status).to.equal(200)
         expect(response.body).to.have.property("user")
         expect(response.body.user.requests).to.be.an("array")
@@ -118,8 +117,8 @@ describe("POST /", () => {
     })
 
     it("Возвращает ошибку если пользователь не авторизован", async () => {
-        await request.post("registration").send(userData)
-        const response = await request.post("/").send(requestData)
+        await request.post("/api/users/registration").send(userData)
+        const response = await request.post("/api/users/").send(requestData)
 
         expect(response.status).to.equal(401)
         expect(response.body).to.have.property("message")
@@ -127,15 +126,15 @@ describe("POST /", () => {
     })
 
     it("Возвращает ошибку при отсутствии обязательных полей", async () => {
-        await request.post("registration").send(userData)
-        await request.post("/login").send(userData)
+        await request.post("/api/users/registration").send(userData)
+        await request.post("/api/users/login").send(userData)
 
-        const initialUser = await request.get("/")
+        const initialUser = await request.get("/api/users/")
         expect(initialUser.status).to.equal(200)
         expect(initialUser.body).to.have.property("user")
         expect(initialUser.body.user.requests).to.be.an("array")
 
-        const response = await request.post("/").send({request: requestData.request})
+        const response = await request.post("/api/users/").send({request: requestData.request})
 
         expect(response.status).to.equal(400)
         expect(response.body).to.have.property("message")
@@ -143,25 +142,25 @@ describe("POST /", () => {
     })
 })
 
-describe("DELETE /:id", () => {
+describe("DELETE /api/users/:id", () => {
     it("Успешно удаляет запрос из БД", async () => {
-        await request.post("registration").send(userData)
-        await request.post("/login").send(userData)
+        await request.post("/api/users/registration").send(userData)
+        await request.post("/api/users/login").send(userData)
 
-        const initialUser = await request.get("/")
+        const initialUser = await request.get("/api/users/")
         expect(initialUser.status).to.equal(200)
         expect(initialUser.body).to.have.property("user")
         expect(initialUser.body.user.requests).to.be.an("array")
         expect(initialUser.body.user.requests.length).to.equal(0)
 
-        const addRequest = (await request.post("/")).setEncoding(requestData)
+        const addRequest = (await request.post("/api/users/")).setEncoding(requestData)
         expect(addRequest.status).to.equal(200)
         expect(addRequest.body).to.have.property("user")
         expect(addRequest.body.user.requests).to.be.an("array")
         expect(addRequest.body.user.requests.length).to.equal(initialUser.body.user.requests.length + 1)
         expect(addRequest.body.user.requests.at(0)).to.equal(requestData)
 
-        const response = await request.delete(`/${addRequest.body.user.request.at(0).id}`)
+        const response = await request.delete(`/api/users/${addRequest.body.user.request.at(0).id}`)
 
         expect(response.status).to.equal(200)
         expect(response.body).to.have.property("user")
@@ -170,8 +169,8 @@ describe("DELETE /:id", () => {
     })
 
     it("Возвращает ошибку если пользователь не авторизован", async () => {
-        await request.post("registration").send(userData)
-        const response = await request.delete("/5").send(requestData)
+        await request.post("/api/users/registration").send(userData)
+        const response = await request.delete("/api/users/5").send(requestData)
 
         expect(response.status).to.equal(401)
         expect(response.body).to.have.property("message")
@@ -179,23 +178,23 @@ describe("DELETE /:id", () => {
     })
 
     it("Возвращает ошибку если запрос не существует", async () => {
-        await request.post("registration").send(userData)
-        await request.post("/login").send(userData)
+        await request.post("/api/users/registration").send(userData)
+        await request.post("/api/users/login").send(userData)
 
-        const initialUser = await request.get("/")
+        const initialUser = await request.get("/api/users/")
         expect(initialUser.status).to.equal(200)
         expect(initialUser.body).to.have.property("user")
         expect(initialUser.body.user.requests).to.be.an("array")
         expect(initialUser.body.user.requests.length).to.equal(0)
 
-        const addRequest = (await request.post("/")).setEncoding(requestData)
+        const addRequest = (await request.post("/api/users/")).setEncoding(requestData)
         expect(addRequest.status).to.equal(200)
         expect(addRequest.body).to.have.property("user")
         expect(addRequest.body.user.requests).to.be.an("array")
         expect(addRequest.body.user.requests.length).to.equal(initialUser.body.user.requests.length + 1)
         expect(addRequest.body.user.requests.at(0)).to.equal(requestData)
 
-        const response = await request.delete(`/${addRequest.body.user.request.at(0).id + 1}`)
+        const response = await request.delete(`/api/users/${addRequest.body.user.request.at(0).id + 1}`)
 
         expect(response.status).to.equal(404)
         expect(response.body).to.have.property("message")
