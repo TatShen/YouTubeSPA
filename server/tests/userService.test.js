@@ -14,16 +14,16 @@ describe("UserServices test", () => {
     limit: 20,
   };
 
-  beforeEach(async () => {
-    await request(app)
-      .delete("/api/users/delete")
-      .send({ login: userData.login });
-  });
 
   afterEach(async () => {
+    const loginResponse = await request(app)
+      .post("/api/users/login")
+      .send(userData);
+
+    const token = loginResponse.body.access_token;
     await request(app)
       .delete("/api/users/delete")
-      .send({ login: userData.login });
+      .set("Authorization", `Bearer ${token}`);
   });
 
   test("Успешная регистрация", async () => {
@@ -137,6 +137,7 @@ describe("UserServices test", () => {
   });
 
   test("Успешное удаление запроса", async () => {
+    console.log("Успешное удаление запроса")
     await request(app).post("/api/users/registration").send(userData);
     const loginResponse = await request(app)
       .post("/api/users/login")
@@ -144,13 +145,14 @@ describe("UserServices test", () => {
 
     const token = loginResponse.body.access_token;
     const addRequest = await request(app)
-      .get("/api/users/")
+      .post("/api/users/")
       .set("Authorization", `Bearer ${token}`)
       .send(requestData);
+      console.log( addRequest.body.user.requests)
     const requestId = addRequest.body.user.requests[0].id;
 
     const deleteResponse = await request(app)
-      .delete(`/api/users/${requestId}`)
+      .delete(`/api/users/requests/${requestId}`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(deleteResponse.status).toBe(200);
@@ -160,7 +162,7 @@ describe("UserServices test", () => {
   });
 
   test("Ошибка при удалении запроса без авторизации", async () => {
-    const response = await request(app).delete("/api/users/5");
+    const response = await request(app).delete("/api/users/requests/5");
     expect(response.status).toBe(401);
     expect(response.body).toHaveProperty(
       "message",
@@ -177,7 +179,7 @@ describe("UserServices test", () => {
     const token = loginResponse.body.access_token;
 
     const response = await request(app)
-      .delete("/api/users/9999")
+      .delete("/api/users/requests/9999")
       .set("Authorization", `Bearer ${token}`);
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty(

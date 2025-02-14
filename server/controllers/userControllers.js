@@ -60,7 +60,7 @@ class UserControllers {
         .status(400)
         .json({ errors: errors.array().map((item) => item.msg) });
     }
-    await userServices.deleteUser(req.body, res);
+    await userServices.deleteUser(req, res);
   }
 }
 
