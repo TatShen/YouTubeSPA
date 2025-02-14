@@ -86,7 +86,7 @@ class UserApi {
       if (!token) {
         throw new Error("Токен не найден");
       }
-      const { data } = await instance.delete(`/${value}`, {
+      const { data } = await instance.delete(`/requests/${value}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
