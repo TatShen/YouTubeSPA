@@ -84,9 +84,6 @@ class UserServices {
         res.status(401).json({ message: "Пользователь не авторизован!" });
       }
 
-      if (!Array.isArray(user.requests)) {
-        user.requests = [];
-      }
 
       if (!req.body.request || !req.body.name || !req.body.limit) {
         res
@@ -125,16 +122,13 @@ class UserServices {
         ],
       });
       if (!user) {
-        res.status(401).json({ message: "Пользователь не авторизован!" });
+        return res.status(401).json({ message: "Пользователь не авторизован!" });
+        
       }
 
-      if (!Array.isArray(user.requests)) {
-        user.requests = [];
-      }
-
-      if (!user.request.include((item) => item.id === req.params.id)) {
-        res.status(404).json({ message: "Такого запроса не существует!" });
-      }
+      if (!user.requests.some((item) => item.id === Number(req.params.id))) {
+        return res.status(404).json({ message: "Такого запроса не существует!" });
+    }
 
       await Request.destroy({ where: { id: req.params.id } });
 
@@ -149,17 +143,16 @@ class UserServices {
 
   async deleteUser(req, res) {
     try {
-      const { login } = req.body;
-      const user = await Users.findOne({ where: { login } });
+      const user = await Users.findByPk(req.userId)
 
       if (!user) {
         return res.status(404).json({ message: "Пользователь не найден" });
       }
 
-      await user.destroy();
-      res.status(200).json({ message: "Пользователь удален" });
+      await user.destroy()
+      return res.status(200).json({ message: "Пользователь удален" });
     } catch (error) {
-      res.status(500).json({ message: "Ошибка сервера" });
+      return res.status(500).json({ message: "Ошибка сервера" });
     }
   }
 }

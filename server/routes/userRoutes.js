@@ -6,7 +6,7 @@ const userControllers = require("../controllers/userControllers")
 
 /**
  * @swagger
- * /api/registration:
+ * /api/users/registration:
  *    post:
  *      summary: Регистрация 
  *      description: Регистрация нового пользователя
@@ -43,7 +43,7 @@ router.post("/registration", validateBodyUser, userControllers.registration)
 
 /**
  * @swagger
- * /api/login:
+ * /api/users/login:
  *    post:
  *      summary: Авторизация 
  *      description: Авторизация пользователя
@@ -80,9 +80,11 @@ router.post("/registration", validateBodyUser, userControllers.registration)
 
 router.post("/login",validateBodyUser, userControllers.login)
 
+router.delete("/delete",authenticateToken, userControllers.deleteUser)
+
 /**
  * @swagger
- * /api/:
+ * /api/users/:
  *   get:
  *     summary: Получить информацию о запросах пользователя
  *     description: Получение списка запросов из базы данных.
@@ -103,7 +105,7 @@ router.get("/", authenticateToken, userControllers.getUser)
 
 /**
  * @swagger
- * /api/:
+ * /api/users/:
  *    post:
  *      summary: Добавление запроса 
  *      description: Сохраняет запрос пользователя в базу данных
@@ -152,7 +154,7 @@ router.post("/", authenticateToken, userControllers.addRequest)
 
 /**
  * @swagger
- * /api/{id}:
+ * /api/users/requests/:{id}:
  *    delete:
  *      summary: Удалить запрос
  *      description: Удаление запроса из базы данных
@@ -175,8 +177,8 @@ router.post("/", authenticateToken, userControllers.addRequest)
  *          description: Внутренняя ошибка сервера. Пожалуйста, попробуйте повторить запрос позже.
  */
 
-router.delete("/:id", authenticateToken, userControllers.deleteRequest)
+router.delete("/requests/:id", authenticateToken, userControllers.deleteRequest)
 
-router.delete("/delete", userControllers.deleteUser)
+
 
 module.exports = router
